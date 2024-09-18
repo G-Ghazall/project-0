@@ -1,0 +1,10 @@
+n = int(input("Give an integer: ")) # take an integer from the user
+root = 0 # start from 0
+while root**3 < abs(n): # increase the root while its third power is less than abs(n)
+    root += 1
+if root**3 == n: # if we finally arrive at the cube root
+    if n < 0: # if the input is negative, its cube root should also be negative
+        root = -root
+    print("Your number is a perfect cube and its root is:",root)
+else:
+    print("The input number is not a perfect cube")
