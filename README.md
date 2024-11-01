@@ -1,5 +1,4 @@
 # project-0
- python simple project
 This project implements a series of sorting algorithms, with a focus on efficient sorting for large datasets. It includes a customized three-element sorting method, a partitioning algorithm for quicksort, and a complete quicksort function. The code also includes timing and performance analysis of quicksort to observe how the algorithm scales with the array size.
 
 The primary objectives of this project are:
