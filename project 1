@@ -1,10 +1,97 @@
-n = int(input("Give an integer: ")) # take an integer from the user
-root = 0 # start from 0
-while root**3 < abs(n): # increase the root while its third power is less than abs(n)
-    root += 1
-if root**3 == n: # if we finally arrive at the cube root
-    if n < 0: # if the input is negative, its cube root should also be negative
-        root = -root
-    print("Your number is a perfect cube and its root is:",root)
-else:
-    print("The input number is not a perfect cube")
+import random
+import time
+import math
+
+def swap(a, i, j):
+    """Swaps two elements in an array."""
+    a[i], a[j] = a[j], a[i]
+
+def sort_three(a, low, high):
+    """Sorts three elements to ensure a[low] <= a[mid] <= a[high]."""
+    mid = (low + high) // 2
+    if a[low] > a[mid]:
+        swap(a, low, mid)
+    if a[mid] > a[high]:
+        swap(a, mid, high)
+    if a[low] > a[mid]:
+        swap(a, low, mid)
+
+def partition(a, lo, hi):
+    """Partitions the array using a pivot and returns the pivot index."""
+    mid = (lo + hi) // 2
+    swap(a, mid, hi - 1)
+    pivot = a[hi - 1]
+    i, j = lo, hi - 1
+
+    while True:
+        while True:
+            i += 1
+            if a[i] >= pivot:
+                break
+        while True:
+            j -= 1
+            if a[j] <= pivot:
+                break
+        if i >= j:
+            break
+        swap(a, i, j)
+
+    swap(a, i, hi - 1)
+    return i
+
+def quicksort(a):
+    """Sorts the array using quicksort."""
+    _quicksort(a, 0, len(a) - 1)
+
+def _quicksort(a, lo, hi):
+    if lo + 64 > hi:
+        a[lo:hi + 1] = sorted(a[lo:hi + 1])
+    else:
+        _pivot(a, lo, hi)
+        pivot_index = partition(a, lo, hi)
+        _quicksort(a, lo, pivot_index - 1)
+        _quicksort(a, pivot_index + 1, hi)
+
+def _pivot(a, lo, hi):
+    """Sets up a pivot using the median-of-three strategy."""
+    mid = (lo + hi) // 2
+    if a[mid] < a[lo]:
+        swap(a, lo, mid)
+    if a[hi] < a[lo]:
+        swap(a, lo, hi)
+    if a[hi] < a[mid]:
+        swap(a, mid, hi)
+
+def tabulate_T_n(start, times):
+    """Runs timing tests for quicksort with increasing array sizes."""
+    results = []
+    for k in range(times + 1):
+        N = start * (2 ** k)
+        times_list = []
+        for _ in range(10):
+            a = [random.randint(0, N) for _ in range(N)]
+            start_time = time.perf_counter()
+            quicksort(a)
+            end_time = time.perf_counter()
+            elapsed_time = end_time - start_time
+            times_list.append(elapsed_time)
+        average_time = sum(times_list) / len(times_list)
+        results.append((N, average_time))
+    return results
+
+# Define initial parameters and run performance tests
+start_size = 800
+number_of_doublings = 9
+table = tabulate_T_n(start_size, number_of_doublings)
+
+# Display timing and complexity analysis
+extended_table = [(n, t, math.log2(n), n * math.log2(n), n ** 2,
+                   t / math.log2(n), t / (n * math.log2(n)), t / n ** 2)
+                  for n, t in table]
+
+print(f"{'N':>10} {'T(N) (s)':>10} {'log2(N)':>10} {'N*log2(N)':>15} {'N^2':>15} "
+      f"{'T(N)/log2(N)':>15} {'T(N)/(N*log2(N))':>20} {'T(N)/N^2':>15}")
+
+for n, t, log_n, n_log_n, n_sq, ratio_log_n, ratio_n_log_n, ratio_n_sq in extended_table:
+    print(f"{n:10} {t:10.6f} {log_n:10.4f} {n_log_n:15,.2f} {n_sq:15,} "
+          f"{ratio_log_n:15.3e} {ratio_n_log_n:20.3e} {ratio_n_sq:15.3e}")
