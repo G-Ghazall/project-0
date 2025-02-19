@@ -2,6 +2,7 @@ import random
 import time
 import math
 
+
 def swap(a, i, j):
     """Swaps two elements in an array."""
     a[i], a[j] = a[j], a[i]
